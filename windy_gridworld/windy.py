@@ -3,13 +3,12 @@ import numpy as np
 
 class WindyGridWorld:
 
-    def __init__(self, grid_size, winner_tile, windy_array):
+    def __init__(self, grid_size, winner_tile, windy_array, initial=None):
 
         self.grid_size = grid_size  # tuple (row, col)
-
-        self._current_position = self._set_initial_position()
-
         self.__index_shift = np.asarray([1, 1])
+
+        self._current_position = np.asarray(initial) - self.__index_shift if initial else self._set_initial_position()
 
         self._winner_tile = np.asarray(winner_tile) - self.__index_shift  # tuple (row, col)
 
