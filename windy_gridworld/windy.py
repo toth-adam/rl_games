@@ -3,12 +3,12 @@ import numpy as np
 
 class WindyGridWorld:
 
-    def __init__(self, grid_size, winner_tile, windy_array, initial=None):
+    def __init__(self, grid_size, winner_tile, windy_array, initial=None, only_first_row=True):
 
         self.grid_size = grid_size  # tuple (row, col)
         self.__index_shift = np.asarray([1, 1])
 
-        self._current_position = np.asarray(initial) - self.__index_shift if initial else self._set_initial_position()
+        self._current_position = np.asarray(initial) - self.__index_shift if initial else self._set_initial_position(only_first_row)
 
         self._winner_tile = np.asarray(winner_tile) - self.__index_shift  # tuple (row, col)
 
@@ -37,11 +37,10 @@ class WindyGridWorld:
             next_pos[0] = 0 if wind > 0 else self.grid_size[0] - 1
 
         self.set_current_position(next_pos)
-        return self.current_pos(), self._reward(), self._is_finished()
+        return self.current_pos(), self._reward(action), self._is_finished()
 
-    @staticmethod
-    def _reward():
-        return -1
+    def _reward(self, action):
+        return -1 if action < 5 else -np.sqrt(2)
 
     def current_pos(self):
         return tuple(self._current_position + self.__index_shift)
@@ -49,8 +48,11 @@ class WindyGridWorld:
     def set_current_position(self, pos):
         self._current_position = pos
 
-    def _set_initial_position(self):
-        return np.asarray([np.random.randint(0, self.grid_size[0]), 0])
+    def _set_initial_position(self, only_first_row):
+        if only_first_row:
+            return np.asarray([np.random.randint(0, self.grid_size[0]), 0])
+        return np.asarray([np.random.randint(self.grid_size[0]),
+            np.random.randint(self.grid_size[1])])
 
     def _is_finished(self):
         return True if np.all(np.equal(self._current_position, self._winner_tile)) else False
