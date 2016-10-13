@@ -38,11 +38,14 @@ class WindyGridWorld:
             next_pos[0] = 0 if wind > 0 else self.grid_size[0] - 1
 
         self.set_current_position(next_pos)
-        return tuple(self._current_position + self.__index_shift), self._reward(), self._is_finished()
+        return self.current_pos(), self._reward(), self._is_finished()
 
     @staticmethod
     def _reward():
         return -1
+
+    def current_pos(self):
+        return tuple(self._current_position + self.__index_shift)
 
     def set_current_position(self, pos):
         self._current_position = pos
