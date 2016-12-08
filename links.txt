@@ -1,0 +1,12 @@
+﻿######## RMSProp ########
+http://sebastianruder.com/optimizing-gradient-descent/index.html#rmsprop
+http://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf
+
+######## Normalize advantage/reward function with mean + std dev ########
+https://arxiv.org/pdf/1506.02438v5.pdf
+
+######## Policy Gradient Video ############
+https://www.youtube.com/watch?v=oPGVsoBonLM
+
+######## Policy Gradient /w func aprox ########
+https://webdocs.cs.ualberta.ca/~sutton/papers/SMSM-NIPS99.pdf
