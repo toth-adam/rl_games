@@ -4,6 +4,7 @@ Clone of 2048 game.
 
 import random
 import itertools
+from collections import Counter
 
 # Directions, DO NOT MODIFY
 UP = 1
@@ -45,6 +46,7 @@ def find_adjacent(left, line):
 
     return left, right
 
+
 def merge(line):
     """
     Merge the tiles in a line of 2048
@@ -54,7 +56,7 @@ def merge(line):
     Args:
         line:  a line of 2048 numbers
     """
-    
+
     result = [0] * len(line)
     current = left = 0
 
@@ -107,6 +109,7 @@ class TwentyFortyEight:
         self.reset()
         self.counter = 1
         self.changed = None
+        self._score_per_step = 0
 
         # self.check_old_new_vals = {}
 
@@ -152,6 +155,7 @@ class TwentyFortyEight:
         """
         # keep track of whether board changed
         self.changed = False
+        self._score_per_step = 0
 
         # iterate over all initial tiles for the direction
         # merge the line associated with the initial tile
@@ -170,14 +174,14 @@ class TwentyFortyEight:
                 cur = (row, col)
 
             merged = merge(line)
-            #print(merged)
+            self._score_per_step += self.calc_reward_for_line(line, merged)
+
             for index in range(self._num_tiles[direction]):
                 row, col = line_grid_map[index]
                 old_val = self.get_tile(row, col)
                 new_val = merged[index]
                 # self.check_old_new_vals.update({(self.counter, index): (old_val, new_val)})
                 if old_val != new_val:
-                    print(old_val, new_val)
                     if is_check:
                         return True
 
@@ -244,9 +248,18 @@ class TwentyFortyEight:
         #return list(itertools.chain.from_iterable(strings))
         return tuple(itertools.chain.from_iterable(strings))
 
+    @staticmethod
+    def calc_reward_for_line(line_before_merge, line_after_merge):
+        zeros_before_merge = line_before_merge.count(0)
+        zeros_after_merge = line_after_merge.count(0)
+        if zeros_before_merge != zeros_after_merge:
+            scores = [val*(count - count % 2) for val, count in Counter(line_before_merge).items() if count > 1]
+            return int(sum(scores))
+        return 0
+
     def reward(self):
         if self.changed:
-            return self.table_as_array().count(1) / 16
+            return self._score_per_step
         else:
             return -10
 
@@ -265,13 +278,12 @@ if __name__ == "__main__":
     VALID = [1,2,3,4]
     game = TwentyFortyEight(4, 4)
     game.reset()
-    print(game)   
-    print("##########################")
-    c = random.choice(VALID)
-    print(c)
-    game.move(c)
     print(game)
-    print(c)
-    game.move(c)
-    print(game)
+    for _ in range(15):
+        print("##########################")
+        c = random.choice(VALID)
+        print(c)
+        game.move(c)
+        print(game.reward())
+        print(game)
 
